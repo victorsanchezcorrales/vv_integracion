@@ -37,7 +37,6 @@ public class TestValidUser {
 	private SystemManager manager;
 	private InOrder ordered;
 	private User userValido;
-	private User userInvalido;
 	private static final String idValido = "123";
 	private Collection<Object> retorno;
 	
@@ -54,9 +53,8 @@ public class TestValidUser {
 		       
 	}
 	
-	// usuario y filtro valido 1
 	@Test
-	public void testStartRemoteSystem1() throws SystemManagerException, OperationNotSupportedException {
+	public void testStartRemoteSystemWithValidUserAndSystem() throws SystemManagerException, OperationNotSupportedException {
 		
         when(mockGenericDao.getSomeData(userValido, "where id=" + idValido)).thenReturn(Arrays.asList("uno", "dos"));
 
@@ -67,9 +65,8 @@ public class TestValidUser {
 		ordered.verify(mockGenericDao).getSomeData(userValido, "where id=" + idValido);
 	}
 	
-	// usuario valido y filtro null
 	@Test
-	public void testStartRemoteSystem2() throws SystemManagerException, OperationNotSupportedException {
+	public void testStartRemoteSystemWithValidUserAndFilterNull() throws SystemManagerException, OperationNotSupportedException {
 		
         when(mockGenericDao.getSomeData(userValido, "where id=" + null)).thenReturn(Arrays.asList("uno", "dos", "tres"));
 
@@ -77,14 +74,12 @@ public class TestValidUser {
 		assertEquals(retorno.toString(), "[uno, dos, tres]");
 		
 		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
-		ordered.verify(mockGenericDao).getSomeData(userValido, "where id=" + idValido);
+		ordered.verify(mockGenericDao).getSomeData(userValido, "where id=" + null);
 	}
 
 	
-	
-	// usuario y sistema valido
-	@Test
-	public void testStopRemoteSystem1() throws SystemManagerException, OperationNotSupportedException {
+		@Test
+	public void testStopRemoteSystemWithValidUserAndSystem() throws SystemManagerException, OperationNotSupportedException {
 		
         when(mockGenericDao.getSomeData(userValido, "where id=" + idValido)).thenReturn(Arrays.asList("uno", "dos"));
 
@@ -96,9 +91,8 @@ public class TestValidUser {
 	}
 	
 	
-	// usuario valido y filtro null
 	@Test
-	public void testStopRemoteSystem2() throws SystemManagerException, OperationNotSupportedException {
+	public void testStopRemoteSystemWithValidUserAndFilterNull() throws SystemManagerException, OperationNotSupportedException {
 		
         when(mockGenericDao.getSomeData(userValido, "where id=" + null)).thenReturn(Arrays.asList("uno", "dos", "tres"));
 
@@ -106,14 +100,13 @@ public class TestValidUser {
 		assertEquals(retorno.toString(), "[uno, dos, tres]");
 		
 		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
-		ordered.verify(mockGenericDao).getSomeData(userValido, "where id=" + idValido);
+		ordered.verify(mockGenericDao).getSomeData(userValido, "where id=" + null);
 		
 	}
 	
 	
-	// usuario y filtro valido
 	@Test
-    public void testAddRemoteSystem1() throws SystemManagerException, OperationNotSupportedException {
+    public void testAddRemoteSystem() throws SystemManagerException, OperationNotSupportedException {
 		
 		String remoto = "VV";
 		
@@ -122,13 +115,12 @@ public class TestValidUser {
 		manager.addRemoteSystem(userValido.getId(), remoto);
 
 		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
-		ordered.verify(mockGenericDao).getSomeData(userValido, remoto);
+		ordered.verify(mockGenericDao).updateSomeData(userValido, remoto);
 		
 	}
 	
-	// usuario valido y remote invalido
 	@Test
-    public void testAddRemoteSystem2() throws SystemManagerException, OperationNotSupportedException {
+    public void testAddRemoteSystemWithUpdateFailure() throws SystemManagerException, OperationNotSupportedException {
 		
 		String remoto = "Vv";
 		when(mockGenericDao.updateSomeData(userValido, remoto)).thenReturn(false);
@@ -139,8 +131,38 @@ public class TestValidUser {
 		assertEquals("cannot add remote", e.getMessage());
 		
 		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
-		ordered.verify(mockGenericDao).getSomeData(userValido, remoto);
+		ordered.verify(mockGenericDao).updateSomeData(userValido, remoto);
 		
 	}
+	
+	@Test
+    public void testDeleteRemoteSystem() throws SystemManagerException, OperationNotSupportedException {
+		
+		when(mockGenericDao.deleteSomeData(userValido, idValido)).thenReturn(true);
+		
+		manager.deleteRemoteSystem(userValido.getId(), idValido);
+		
+		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
+		ordered.verify(mockGenericDao).deleteSomeData(userValido, idValido);
+
+	}
+	
+	@Test
+    public void testDeleteRemoteSystemAWithDeleteFailure() throws SystemManagerException, OperationNotSupportedException {
+		
+		when(mockGenericDao.deleteSomeData(userValido, idValido)).thenReturn(false);
+		
+		SystemManagerException e = assertThrows(SystemManagerException.class, () -> {
+			manager.deleteRemoteSystem(userValido.getId(), idValido);
+		});
+		assertEquals("cannot delete remote: does remote exists?", e.getMessage());
+		
+				
+		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
+		ordered.verify(mockGenericDao).deleteSomeData(userValido, idValido);
+
+	}
+	
+
 	
 }
