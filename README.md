@@ -17,6 +17,15 @@ GRUPO 1 IWT-42
 mvn test 
 ```
 
+- Para ejecutar los test de una determinada clase utilice ```mvn -Dtest=<nombre clase> test```. Por ejemplo:
+```
+mvn test -Dtest=TestValidUser test
+```
+- Para ejecutar los test de un determinado método utilice ```mvn -Dtest=<nombre clase>#<nombre metodo> test```. Por ejemplo:
+```
+mvn test -Dtest=TestValidUser#testStartRemoteSystemWithValidUserAndSystem test 
+```
+
 ### Generar informes 📄
 - Al ejecutar los test se generan informes en formato ```.txt``` y ```.xml``` en ```.target/surefire-reports```
 - Para generar un informe en formato ```.html``` utilice el comando:
