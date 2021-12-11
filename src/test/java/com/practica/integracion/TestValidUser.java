@@ -116,7 +116,6 @@ public class TestValidUser {
 
 		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
 		ordered.verify(mockGenericDao).updateSomeData(userValido, remoto);
-		
 	}
 	
 	@Test
@@ -156,10 +155,9 @@ public class TestValidUser {
 			manager.deleteRemoteSystem(userValido.getId(), idValido);
 		});
 		assertEquals("cannot delete remote: does remote exists?", e.getMessage());
-		
-				
+
 		ordered.verify(mockAuthDao).getAuthData(userValido.getId());
-		ordered.verify(mockGenericDao).deleteSomeData(userValido, idValido);
+		ordered.verify(mockGenericDao).deleteSomeData(userValido, idValido);		
 
 	}
 	

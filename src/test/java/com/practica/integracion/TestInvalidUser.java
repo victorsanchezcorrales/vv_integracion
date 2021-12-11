@@ -51,40 +51,38 @@ public class TestInvalidUser {
 	@Test
 	public void testStartRemoteSystemWithInvalidUser() throws SystemManagerException, OperationNotSupportedException {
 		
-		String remoto = "Vv";
-		when(mockGenericDao.getSomeData(userInvalido, "where id=" + remoto)).thenThrow(new OperationNotSupportedException());
+		String remotoID = "123";
+		when(mockGenericDao.getSomeData(userInvalido, "where id=" + remotoID)).thenThrow(new OperationNotSupportedException());
 		
 		SystemManagerException e = assertThrows(SystemManagerException.class, () -> {
-			manager.startRemoteSystem(userInvalido.getId(), remoto);
+			manager.startRemoteSystem(userInvalido.getId(), remotoID);
 		});
 		assertEquals(OperationNotSupportedException.class, e.getCause().getClass());
 		
 		ordered.verify(mockAuthDao).getAuthData(userInvalido.getId());
-		ordered.verify(mockGenericDao).updateSomeData(userInvalido, remoto);
-		
+		ordered.verify(mockGenericDao).getSomeData(userInvalido, "where id=" + remotoID);		
 	}
 	
 	@Test
     public void testStopRemoteSystemWithInvalidUser() throws SystemManagerException, OperationNotSupportedException {
 		
-		String remoto = "Vv";
-		when(mockGenericDao.getSomeData(userInvalido, "where id=" + remoto)).thenThrow(new OperationNotSupportedException());
+		String remotoID = "123";
+		when(mockGenericDao.getSomeData(userInvalido, "where id=" + remotoID)).thenThrow(new OperationNotSupportedException());
 		
 		SystemManagerException e = assertThrows(SystemManagerException.class, () -> {
-			manager.startRemoteSystem(userInvalido.getId(), remoto);
+			manager.stopRemoteSystem(userInvalido.getId(), remotoID);
 		});
 		assertEquals(OperationNotSupportedException.class, e.getCause().getClass());
 		
 		ordered.verify(mockAuthDao).getAuthData(userInvalido.getId());
-		ordered.verify(mockGenericDao).updateSomeData(userInvalido, remoto);
-		
+		ordered.verify(mockGenericDao).getSomeData(userInvalido, "where id=" + remotoID);				
 	}
 	
 	@Test
     public void testAddRemoteSystemWithInvalidUser() throws SystemManagerException, OperationNotSupportedException {
 		
-		String remoto = "Vv";
-		when(mockGenericDao.updateSomeData(userInvalido, "where id=" + remoto)).thenThrow(new OperationNotSupportedException());
+		String remoto = "VV";
+		when(mockGenericDao.updateSomeData(userInvalido, remoto)).thenThrow(new OperationNotSupportedException());
 		
 		SystemManagerException e = assertThrows(SystemManagerException.class, () -> {
 			manager.addRemoteSystem(userInvalido.getId(), remoto);
@@ -99,34 +97,15 @@ public class TestInvalidUser {
 	@Test
 	public void testDeleteRemoteSystemWithInvalidUser() throws SystemManagerException, OperationNotSupportedException {
 		
-		String remoto = "Vv";
-		when(mockGenericDao.deleteSomeData(userInvalido, "where id=" + remoto)).thenThrow(new OperationNotSupportedException());
+		String remotoID = "123";
+		when(mockGenericDao.deleteSomeData(userInvalido, remotoID)).thenThrow(new OperationNotSupportedException());
 		
 		SystemManagerException e = assertThrows(SystemManagerException.class, () -> {
-			manager.deleteRemoteSystem(userInvalido.getId(), remoto);
+			manager.deleteRemoteSystem(userInvalido.getId(), remotoID);
 		});
 		assertEquals(OperationNotSupportedException.class, e.getCause().getClass());
 		
 		ordered.verify(mockAuthDao).getAuthData(userInvalido.getId());
-		ordered.verify(mockGenericDao).updateSomeData(userInvalido, remoto);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		ordered.verify(mockGenericDao).deleteSomeData(userInvalido, remotoID);
+	}	
 }
